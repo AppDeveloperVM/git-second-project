@@ -27,12 +27,18 @@ export class HomePage implements OnInit{
   username : string;
   authkey  = environment.gitKey;
 
+  mostFamous : Array<any>;
+  listed : Observable<any>;
+  items : Array<any>;
+  listType = "";
+
   constructor(private githubService : GithubAPIService) {
     this.form = new FormGroup({
       name: new FormControl('')
     });
 
     this.init();
+    this.getMostKnown();
 
     this.profile = new Profile();
     this.profile.user = new User();
@@ -51,98 +57,39 @@ export class HomePage implements OnInit{
   onKeyDownEvent(event: any){
     try {
       if(event == null) return;
-      if(event.code == "Enter"){
-        this.onSearch();
-      }
+    
     }catch(err){
       console.log(err);
       
     }
   }
 
-  onSearch(){
-    console.log("ON SEARCH");
+  getMostKnown(category : string = 'repoStars'){
 
-    if(this.form.get('name').value != null){
-
-      const username = this.form.get('name').value;
-      console.log(username);
-
-      this.user = null;
-      this.repos = null;
-      
-      const Userpromise = new Promise((resolve,reject) => {
-
-        this.githubService.getUser(username,this.authkey)
-        .pipe(
-          catchError( err => {
-            console.log(err);
-            
-            this.user = null;
-            this.error = err;
-
-            this.handleError(err.status);
-
-            reject(err);
-            return EMPTY;
-          })
-        ).subscribe( user => {
-          this.user = user;
-          this.profile.user = user;
-          resolve(user);
-        });
-
-      });
-
-      const RepoPromise = new Promise((resolve,reject) => {
-
-      /*   if(this.user?.public_repos != 0){
-          reject(null);
-        } */
-
-        this.githubService.getUserRepos(username,this.authkey)
-          .pipe(
-            catchError( err => {
-              console.log(err);
-              
-              this.repos = null;
-              this.error = err;
-              this.handleError(err.status);
-              reject(err);
-              return EMPTY;
-            })
-          ).subscribe( repos => {
-            repos.forEach(repo =>{
-              this.profile.repos.push(repo)
-            })
-            resolve(repos);
-          });
-
-      })
-
-      const finalpromise = new Promise((resolve,reject)=> {
-        Userpromise.then((user)=> {
-        
-          console.log('User found succesfully:',user);
-          RepoPromise.then((repo)=> {
-            console.log('Repos found succesfully',repo);
-            resolve(true);
-          })
-          .catch((err)=> {
-            console.log("Error fetching repos: ", err);
-            reject(false)
-          })
-        })
-        .catch((err)=> {
-          console.log("User not found: ", err);
-          reject(false)
-        })
-      })
-
+    switch(category){
+      case 'repoStars':
+        this.listed = this.githubService.getMostStargazedRepos();
+        this.listType = 'repo';
+        break;
+      case 'repoCount':
+        this.listed = this.githubService.getUsersWithGreatestRepoCount();
+        this.listType = 'user';
+        break;
+      case 'followedUsers':
+        this.listed = this.githubService.getMostFollowedUsers();
+        this.listType = 'user';
+        break;
     }
- 
+
+    this.listed.subscribe(val =>{
+      console.log(val);
+      this.items = val.items;
+    });
+    
 
   }
+
+  
 
   handleError(err){
 

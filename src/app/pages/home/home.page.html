@@ -3,35 +3,57 @@
     <div class="main col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
 
       <div class="search_item">
-        <form [formGroup]="form">
           <div class="introduction">
             
               <div class="title">
                 <img alt="GitHub" src="./../../../assets/icon/github.ico" /> 
-                <h2>Search for a GitHub User</h2> 
+                <h2>Echa un ojo a unos interesante tops</h2> 
               </div>
 
           </div>
-          <input type="text" formControlName="name" class="form-control" (keydown)="onKeyDownEvent($event)" placeholder="Git Username" aria-label="Recipient's username" aria-describedby="basic-addon2">    
+
           <div class="buttons">
-            <ion-button slot="end" type="button" (click)="onSearch()">Search</ion-button>
+            <ion-button  type="button" 
+            (click)="getMostKnown('repoStars')">Top Starred Repos</ion-button>
+
+            <ion-button  type="button" 
+            (click)="getMostKnown('repoCount')">Top Repos Count Users</ion-button>
+
+            <ion-button  type="button" 
+            (click)="getMostKnown('followedUsers')">Top Followed Users</ion-button>
           </div>
-        </form>
+
         </div>
 
-      <div class="users-list" >
+      <div class="items-list" *ngIf="items != null">
 
-        <div class="" *ngIf="user?.id">
-          <app-user [profile]="profile"></app-user>
-        </div>
+          <ion-item *ngFor="let item of items" class="item">
 
-        <div id="error" *ngIf="!user?.id && errorMessage != null">
-          <h5 class="title">Error</h5>
-          <p>Ha habido un error al listar la informacion, {{errorMessage}}.</p>  
-        </div>
+              <div class="info repo" *ngIf="listType == 'repo'">
+                <h3 *ngIf="item?.name">{{item.name}} <a href="{{item.html_url}}" alt="go to item" target="_blank"><ion-icon name="arrow-forward-circle-outline"></ion-icon></a></h3>
+                <p *ngIf="item?.stargazers_count">Stars: {{item?.stargazers_count}}</p>
+              </div>
+
+              <div class="info user" *ngIf="listType == 'user'">
+                <div class="avatar">
+                  <!--Left side -->
+                  <ion-thumbnail class="w-100 h-100">
+                    <img alt="avatar" src="{{item?.avatar_url}}" *ngIf="item?.avatar_url" />
+                    <img alt="avatar" src="../../../assets/icon/github.ico" *ngIf="!item?.avatar_url" />
+                  </ion-thumbnail>
+                  <p><a target="_blank" href="{{item?.html_url}}">{{item.login}}</a></p>
+                </div>
+              </div>
+
+          </ion-item>
+          
 
       </div>
 
+      <div id="error" *ngIf="items != null && errorMessage != null">
+        <h5 class="title">Error</h5>
+        <p>Ha habido un error al listar la informacion, {{errorMessage}}.</p>  
+      </div>
 
     </div>
   </div>

@@ -1,3 +1,6 @@
+
+
+
 #container {
   text-align: center;
 
@@ -51,7 +54,7 @@
     }
 
     .buttons {
-      text-align: right;
+      text-align: center;
     }
 
     padding: 20px 30px 40px 30px;
@@ -61,6 +64,44 @@
       --background: white !important;
         height: 20px;
     }
+  }
+
+  .items-list{
+    display: flex;
+    flex-wrap: wrap;
+
+    .item {
+      width: 100%;
+      border-radius: 10px;
+      background-color:transparent;
+      padding: 2px;
+      
+      .info {
+        width: 100%;
+        border-radius: 10px;
+        .avatar {
+          width: 130px;
+          text-align: center;
+          margin: 0 auto;
+        }
+      }
+
+      .info.repo {
+        height: 120px;
+      }
+
+      .info.user {
+        height: auto;
+      }
+
+    }
+    
+  }
+
+  .items-list > .item {
+    flex: 50%; /* or - flex: 0 50% - or - flex-basis: 50% - */
+    /*demo*/
+    margin-bottom: 10px;
   }
 
   .users-list {
@@ -80,4 +121,17 @@
  
   }
 
+
+ 
+
+
+
+}
+
+
+@media (min-width: 1281px) {
+  .main .items-list > .item {
+    flex: 25%; /* or - flex: 0 50% - or - flex-basis: 50% - */
+    /*demo*/
+  }
 }
