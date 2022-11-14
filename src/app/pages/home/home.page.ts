@@ -52,6 +52,7 @@ export class HomePage implements OnInit{
     this.profile = new Profile();
     this.profile.user = new User();
     this.profile.repos = new Array();
+    this.errorMessage = null;
   }
 
   onKeyDownEvent(event: any){
@@ -66,26 +67,50 @@ export class HomePage implements OnInit{
 
   getMostKnown(category : string = 'repoStars'){
 
-    switch(category){
-      case 'repoStars':
-        this.listed = this.githubService.getMostStargazedRepos();
-        this.listType = 'repo';
-        break;
-      case 'repoCount':
-        this.listed = this.githubService.getUsersWithGreatestRepoCount();
-        this.listType = 'user';
-        break;
-      case 'followedUsers':
-        this.listed = this.githubService.getMostFollowedUsers();
-        this.listType = 'user';
-        break;
-    }
+    const listPromise = new Promise((resolve,reject) => {
 
-    this.listed.subscribe(val =>{
-      console.log(val);
-      this.items = val.items;
+      switch(category){
+        case 'repoStars':
+          this.listed = this.githubService.getMostStargazedRepos();
+          this.listType = 'repo';
+          break;
+        case 'repoCount':
+          this.listed = this.githubService.getUsersWithGreatestRepoCount();
+          this.listType = 'user';
+          break;
+        case 'followedUsers':
+          this.listed = this.githubService.getMostFollowedUsers();
+          this.listType = 'user';
+          break;
+      }
+
+      console.log(this.listed);
+
+      this.listed
+      .pipe(
+        catchError( err => {
+          console.log(err);
+          reject(err.status);
+          return EMPTY;
+        })
+      ).subscribe(val =>{
+          console.log(val);
+
+          this.items = val.items;
+          resolve(val);
+      })
+
     });
-    
+
+    listPromise
+    .then( (res)=>{
+      console.log(res);
+      
+    })
+    .catch((err)=>{
+      console.log(err);
+      this.handleError(err);
+    })
 
   }
 
@@ -104,6 +129,9 @@ export class HomePage implements OnInit{
         this.errorMessage = "error desconocido";
         break;
     }
+
+    console.log(this.errorMessage);
+    
 
   }
 

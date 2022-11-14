@@ -25,12 +25,12 @@
 
         </div>
 
-      <div class="items-list" *ngIf="items != null">
+      <div class="items-list" *ngIf="items != null && errorMessage == null">
 
           <ion-item *ngFor="let item of items" class="item">
 
               <div class="info repo" *ngIf="listType == 'repo'">
-                <h3 *ngIf="item?.name">{{item.name}} <a href="{{item.html_url}}" alt="go to item" target="_blank"><ion-icon name="arrow-forward-circle-outline"></ion-icon></a></h3>
+                <a href="{{item.html_url}}" alt="go to item" target="_blank"><h3 *ngIf="item?.name">{{item.name}} </h3></a>
                 <p *ngIf="item?.stargazers_count">Stars: {{item?.stargazers_count}}</p>
               </div>
 
@@ -41,8 +41,8 @@
                     <img alt="avatar" src="{{item?.avatar_url}}" *ngIf="item?.avatar_url" />
                     <img alt="avatar" src="../../../assets/icon/github.ico" *ngIf="!item?.avatar_url" />
                   </ion-thumbnail>
-                  <p><a target="_blank" href="{{item?.html_url}}">{{item.login}}</a></p>
                 </div>
+                <p><a target="_blank" href="{{item?.html_url}}">{{item.login}}</a></p>
               </div>
 
           </ion-item>
@@ -50,7 +50,7 @@
 
       </div>
 
-      <div id="error" *ngIf="items != null && errorMessage != null">
+      <div id="error" *ngIf="errorMessage != null">
         <h5 class="title">Error</h5>
         <p>Ha habido un error al listar la informacion, {{errorMessage}}.</p>  
       </div>
